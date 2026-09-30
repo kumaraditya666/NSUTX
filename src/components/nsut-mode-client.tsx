@@ -80,6 +80,26 @@ export function NsutModeClient({
         </ul>
       </section>
 
+      <section aria-label="Upcoming deadlines" className="mt-8">
+        <h2 className="font-semibold">⏰ Upcoming deadlines</h2>
+        {allOpps.filter((o) => o.deadline && followedSlugs.includes(o.societySlug)).length === 0 ? (
+          <p className="mt-2 text-sm opacity-70">No deadlines from followed societies.</p>
+        ) : (
+          <ul className="mt-2 space-y-2">
+            {allOpps
+              .filter((o) => o.deadline && followedSlugs.includes(o.societySlug))
+              .sort((a, b) => new Date(a.deadline ?? 0).getTime() - new Date(b.deadline ?? 0).getTime())
+              .slice(0, 4)
+              .map((o) => (
+                <li key={o.id} className="flex justify-between gap-3 rounded-2xl border p-3 text-sm">
+                  <span><strong>{o.title}</strong> — {o.societyName}</span>
+                  <span className="opacity-60">{o.deadline ? new Date(o.deadline).toLocaleDateString("en-IN") : "TBA"}</span>
+                </li>
+              ))}
+          </ul>
+        )}
+      </section>
+
       <section aria-label="My societies" className="mt-8">
         <h2 className="font-semibold">My Societies</h2>
         {followed.length === 0 ? <p className="mt-2 text-sm opacity-70">Follow societies from any society page.</p> : (

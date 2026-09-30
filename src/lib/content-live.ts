@@ -37,13 +37,18 @@ interface EventRow {
   starts_at: string;
   ends_at: string;
   venue: string | null;
+  registration_deadline: string | null;
+  registration_link: string | null;
+  capacity: number | null;
+  eligibility: string | null;
   societies: { slug: string; name: string } | null;
 }
 
 export async function getLiveEvents(): Promise<{ events: EventItem[]; live: boolean }> {
   if (!configured()) return { events: DEMO_EVENTS, live: false };
-  const rows = await get<EventRow>("events?select=id,title,starts_at,ends_at,venue,societies(slug,name)&order=starts_at&limit=50");
+  const rows = await get<EventRow>("events?select=id,title,description,starts_at,ends_at,venue,registration_deadline,registration_link,capacity,eligibility,societies(slug,name)&order=starts_at&limit=50");
   if (!rows || rows.length === 0) return { events: DEMO_EVENTS, live: false };
+  const now = Date.now();
   return {
     live: true,
     events: rows.map((r) => ({
@@ -55,7 +60,11 @@ export async function getLiveEvents(): Promise<{ events: EventItem[]; live: bool
       endsAt: r.ends_at,
       venue: r.venue ?? "Venue TBA",
       status: getEventStatus(r.starts_at, r.ends_at),
-      registrationOpen: true,
+      registrationOpen: r.registration_deadline ? new Date(r.registration_deadline).getTime() > now : true,
+      ...(r.description ? { description: r.description } : {}),
+      ...(r.registration_link ? { registrationLink: r.registration_link } : {}),
+      ...(r.capacity !== null ? { capacity: r.capacity } : {}),
+      ...(r.eligibility ? { eligibility: r.eligibility } : {}),
     })),
   };
 }

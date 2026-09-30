@@ -15,7 +15,7 @@ export default async function SocietyUpdates({ params }: { params: Promise<{ slu
       <p className="text-sm opacity-60">Announcements · Recruitment · Results. Pin, schedule and archive from Society Admin.</p>
       <PublishAnnouncementForm societySlug={slug} />
       <div className="mt-4 space-y-3">
-        {list.length === 0 ? <EmptyState title="No announcements published." /> : list.map((a) => (
+        {list.length === 0 ? <EmptyState title="No announcements yet." /> : list.map((a) => (
           <article key={a.id} className="panel rounded-2xl p-4">
             <p className="font-semibold">{a.pinned ? "📌 " : ""}{a.title}</p>
             <p className="text-sm opacity-70">{a.body}</p>

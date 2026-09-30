@@ -13,7 +13,7 @@ export default async function SocietyOpportunities({ params }: { params: Promise
     <div>
       <h1 className="text-2xl font-bold">Opportunities</h1>
       <div className="mt-4 grid gap-4 md:grid-cols-2">
-        {list.length === 0 ? <EmptyState title="No open roles right now." description="Recruitment, volunteer and collaboration calls will appear here." /> : list.map((o) => (<OpportunityCard key={o.id} opportunity={o} />))}
+        {list.length === 0 ? <EmptyState title="No open opportunities right now." /> : list.map((o) => (<OpportunityCard key={o.id} opportunity={o} />))}
       </div>
     </div>
   );

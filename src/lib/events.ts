@@ -64,8 +64,16 @@ export function countOverlaps(event: EventItem, all: EventItem[]): EventItem[] {
   });
 }
 
-export function formatTime(iso: string): string {
-  const date = new Date(iso);
+const RECENTLY_ENDED_MS = 24 * 60 * 60_000;
+
+export function recentlyEnded(events: EventItem[], withinMs: number = RECENTLY_ENDED_MS): EventItem[] {
+  const now = Date.now();
+  return events.filter(
+    (e) => e.status === "past" && now - new Date(e.endsAt).getTime() < withinMs,
+  );
+}
+
+export function formatTime(iso: string): string {  const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "Date TBA";
   return date.toLocaleString("en-IN", {
     weekday: "short",

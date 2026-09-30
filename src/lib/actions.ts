@@ -8,10 +8,12 @@ const announcementSchema = z.object({
   societySlug: z.string().min(1),
   title: z.string().min(3).max(120),
   body: z.string().max(2000).default(""),
+  pinned: z.boolean().default(false),
+  publishAt: z.string().optional(),
 });
 
-export async function publishAnnouncement(input: { societySlug: string; title: string; body?: string }): Promise<{ ok: boolean; error?: string }> {
-  const parsed = announcementSchema.safeParse({ ...input, body: input.body ?? "" });
+export async function publishAnnouncement(input: { societySlug: string; title: string; body?: string; pinned?: boolean; publishAt?: string }): Promise<{ ok: boolean; error?: string }> {
+  const parsed = announcementSchema.safeParse({ body: "", pinned: false, ...input });
   if (!parsed.success) return { ok: false, error: "Invalid input." };
   try {
     const supabase = await createSupabaseServer();
@@ -23,6 +25,8 @@ export async function publishAnnouncement(input: { societySlug: string; title: s
       society_id: (society as { id: string }).id,
       title: parsed.data.title,
       body: parsed.data.body,
+      pinned: parsed.data.pinned,
+      ...(parsed.data.publishAt ? { publish_at: parsed.data.publishAt } : {}),
     } as never);
     if (error) return { ok: false, error: error.message };
     revalidatePath(`/societies/${parsed.data.societySlug}/updates`);

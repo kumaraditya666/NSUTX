@@ -14,12 +14,18 @@ function demoActivityFor(slug: string): number {
 }
 
 const POSITIONS: Record<string, { x: number; y: number }> = {
-  ieee: { x: 50, y: 28 },
-  ares: { x: 30, y: 45 },
-  fes: { x: 70, y: 45 },
-  junoon: { x: 22, y: 64 },
-  "e-cell": { x: 78, y: 64 },
-  crescendo: { x: 50, y: 80 },
+  ieee: { x: 50, y: 26 },
+  ares: { x: 28, y: 40 },
+  fes: { x: 72, y: 40 },
+  devcomm: { x: 50, y: 44 },
+  junoon: { x: 18, y: 62 },
+  "e-cell": { x: 82, y: 62 },
+  crescendo: { x: 38, y: 68 },
+  mirage: { x: 62, y: 68 },
+  gdg: { x: 50, y: 84 },
+  debsoc: { x: 30, y: 84 },
+  moksha: { x: 70, y: 84 },
+  rotaract: { x: 50, y: 10 },
 };
 
 export function SocietyRadar({ activityBySlug }: { activityBySlug?: Map<string, number> }): React.JSX.Element {

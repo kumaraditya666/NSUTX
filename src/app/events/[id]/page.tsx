@@ -50,6 +50,13 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
         <div><dt className="opacity-60">Eligibility</dt><dd>{event.eligibility ?? "Not announced"}</dd></div>
       </dl>
 
+      {event.description ? (
+        <section aria-label="About this event" className="mt-6">
+          <h2 className="font-semibold">About</h2>
+          <p className="mt-1 text-sm opacity-80">{event.description}</p>
+        </section>
+      ) : null}
+
       {clashes.length > 0 ? (
         <div role="alert" className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
           <p className="font-semibold">This event overlaps with {clashes.length} existing event(s).</p>

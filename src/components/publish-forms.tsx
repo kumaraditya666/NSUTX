@@ -12,18 +12,24 @@ export function PublishAnnouncementForm({ societySlug }: { societySlug: string }
       societySlug,
       title: String(form.get("title") ?? ""),
       body: String(form.get("body") ?? ""),
+      pinned: form.get("pinned") === "on",
+      ...(String(form.get("publishAt") ?? "").length > 0 ? { publishAt: String(form.get("publishAt")) } : {}),
     });
     setStatus(res.ok ? "✓ Published." : `Error: ${res.error}`);
     if (res.ok) e.currentTarget.reset();
   }
   return (
-    <form onSubmit={onSubmit} className="mt-3 space-y-2 rounded-2xl border p-4">
-      <h3 className="font-semibold">Publish announcement (society admin, login required)</h3>
+    <form onSubmit={onSubmit} className="panel mt-3 space-y-2 rounded-2xl p-4">
+      <h3 className="font-semibold">Broadcast (society admin, login required)</h3>
       <label htmlFor={`ann-title-${societySlug}`} className="sr-only">Title</label>
       <input id={`ann-title-${societySlug}`} name="title" required minLength={3} placeholder="Title" className="h-10 w-full rounded-xl border border-black/15 bg-transparent px-3 dark:border-white/20" />
       <label htmlFor={`ann-body-${societySlug}`} className="sr-only">Body</label>
       <textarea id={`ann-body-${societySlug}`} name="body" placeholder="Body" className="w-full rounded-xl border border-black/15 bg-transparent px-3 py-2 dark:border-white/20" />
-      <button type="submit" className="rounded-full bg-foreground px-4 py-1.5 text-sm text-background">Publish immediately</button>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <label className="flex items-center gap-1.5"><input type="checkbox" name="pinned" /> Pin</label>
+        <label className="flex items-center gap-1.5">Schedule <input type="datetime-local" name="publishAt" className="h-9 rounded-xl border border-black/15 bg-transparent px-2 dark:border-white/20" /></label>
+      </div>
+      <button type="submit" className="rounded-full bg-foreground px-4 py-1.5 text-sm text-background">Publish</button>
       {status ? <p role="status" className="text-sm">{status}</p> : null}
     </form>
   );

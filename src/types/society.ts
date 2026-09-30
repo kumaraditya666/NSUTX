@@ -38,6 +38,7 @@ export interface EventItem {
   title: string;
   societySlug: string;
   societyName: string;
+  description?: string;
   startsAt: string;
   endsAt: string;
   venue: string;

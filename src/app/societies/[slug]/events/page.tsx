@@ -21,7 +21,7 @@ export default async function SocietyEvents({ params }: { params: Promise<{ slug
       <div className="mt-4"><ClashDetector events={all} /></div>
       <CreateEventForm societySlug={slug} />
       <h2 className="mb-2 mt-6 font-semibold">Upcoming Events</h2>
-      {upcoming.length === 0 ? <EmptyState title="No events yet." description="Upcoming events will appear here." /> : <div className="grid gap-4 md:grid-cols-2">{upcoming.map((e) => (<EventCard key={e.id} event={e} clashCount={countOverlaps(e, all).length} />))}</div>}
+      {upcoming.length === 0 ? <EmptyState title="No events announced yet." /> : <div className="grid gap-4 md:grid-cols-2">{upcoming.map((e) => (<EventCard key={e.id} event={e} clashCount={countOverlaps(e, all).length} />))}</div>}
       <h2 className="mb-2 mt-6 font-semibold">Past Events</h2>
       {past.length === 0 ? <EmptyState title="No past events." /> : <div className="grid gap-4 md:grid-cols-2">{past.map((e) => (<EventCard key={e.id} event={e} />))}</div>}
     </div>
