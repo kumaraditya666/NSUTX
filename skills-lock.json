@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "web-state-zustand": {
+      "source": "agents-inc/skills",
+      "sourceType": "github",
+      "skillPath": "src/skills/web-state-zustand/SKILL.md",
+      "computedHash": "983a18c8b9a8f6070aa4e82533013f4a907f9c335e1e9fdd288941270fa36efd"
+    }
+  }
+}
