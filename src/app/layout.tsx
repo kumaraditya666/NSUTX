@@ -9,6 +9,7 @@ import { SearchOverlay } from "@/components/search-overlay";
 import { SwRegister } from "@/components/sw-register";
 import { AskNsutx } from "@/components/ask-nsutx";
 import { OfflineIndicator } from "@/components/offline-indicator";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <OfflineIndicator />
           <SwRegister />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
