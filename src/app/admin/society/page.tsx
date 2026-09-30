@@ -11,7 +11,7 @@ export default function SocietyAdmin(): React.JSX.Element {
         <section className="rounded-2xl border p-5"><h2 className="font-semibold">Opportunities ({DEMO_OPPORTUNITIES.length})</h2><p className="text-sm opacity-60">Recruitment · Volunteers · Competitions · Collaborations.</p></section>
         <section className="rounded-2xl border p-5"><h2 className="font-semibold">Appearance</h2><p className="text-sm opacity-60">Logo · Banner · Accent color · Hero text · Section order. Consistent design system preserved.</p></section>
         <section className="rounded-2xl border p-5"><h2 className="font-semibold">Analytics</h2><p className="text-sm opacity-60">Page views · Event views · Registrations · Followers. No private user data exposed.</p></section>
-        <section className="rounded-2xl border p-5"><h2 className="font-semibold">Verification</h2><p className="text-sm opacity-60">Request “Verified by NSUT Hub”. Platform admin approves.</p></section>
+        <section className="rounded-2xl border p-5"><h2 className="font-semibold">Verification</h2><p className="text-sm opacity-60">Request “Verified by NSUTX”. Platform admin approves.</p></section>
       </div>
     </div>
   );

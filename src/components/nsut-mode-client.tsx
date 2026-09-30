@@ -3,6 +3,7 @@
 import { INTEREST_OPTIONS } from "@/lib/constants";
 import { SEED_SOCIETIES } from "@/lib/seed-societies";
 import { DEMO_ANNOUNCEMENTS, DEMO_EVENTS, DEMO_OPPORTUNITIES, DEMO_SOCIETY_DETAILS } from "@/lib/demo-data";
+import type { Announcement, EventItem, Opportunity, SocietySeed } from "@/types/society";
 import { SocietyCard } from "@/components/society-card";
 import { EventCard } from "@/components/event-card";
 import { DailyDigest } from "@/components/daily-digest";
@@ -11,34 +12,52 @@ import { countOverlaps } from "@/lib/events";
 
 const YEARS = ["1st", "2nd", "3rd", "4th"];
 
-export function NsutModeClient(): React.JSX.Element {
+export function NsutModeClient({
+  societies,
+  events,
+  announcements,
+  opportunities,
+}: {
+  societies?: SocietySeed[];
+  events?: EventItem[];
+  announcements?: Announcement[];
+  opportunities?: Opportunity[];
+}): React.JSX.Element {
   const year = useNsutModeStore((s) => s.year);
   const setYear = useNsutModeStore((s) => s.setYear);
   const interests = useNsutModeStore((s) => s.interests);
   const toggleInterest = useNsutModeStore((s) => s.toggleInterest);
   const followedSlugs = useNsutModeStore((s) => s.followedSlugs);
 
-  const followed = SEED_SOCIETIES.filter((s) => followedSlugs.includes(s.slug));
-  const feed = DEMO_ANNOUNCEMENTS.filter((a) => followedSlugs.includes(a.societySlug));
-  const myEvents = DEMO_EVENTS.filter((e) => followedSlugs.includes(e.societySlug));
-  const recommended = SEED_SOCIETIES.filter((s) => {
+  const allSocieties = societies ?? SEED_SOCIETIES;
+  const allEvents = events ?? DEMO_EVENTS;
+  const allAnns = announcements ?? DEMO_ANNOUNCEMENTS;
+  const allOpps = opportunities ?? DEMO_OPPORTUNITIES;
+  const followed = allSocieties.filter((s) => followedSlugs.includes(s.slug));
+  const feed = allAnns.filter((a) => followedSlugs.includes(a.societySlug));
+  const myEvents = allEvents.filter((e) => followedSlugs.includes(e.societySlug));
+  const recommended = allSocieties.filter((s) => {
     if (followedSlugs.includes(s.slug)) return false;
     const tags = DEMO_SOCIETY_DETAILS[s.slug]?.interests ?? [s.category];
     return interests.length === 0 || interests.some((i) => tags.includes(i));
   }).slice(0, 3);
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
   return (
     <div>
-      <h1 className="text-3xl font-bold">Good morning 👋</h1>
+      <p className="eyebrow">NSUT Mode</p>
+      <h1 className="mt-1 text-3xl font-bold tracking-tight">{greeting} 👋</h1>
       <p className="opacity-70">Your NSUT today — live events, upcoming, society updates, registrations, opportunities.</p>
 
-      <div className="mt-6"><DailyDigest personalizedSlugs={followedSlugs} /></div>
+      <div className="mt-6"><DailyDigest personalizedSlugs={followedSlugs} events={allEvents} announcements={allAnns} opportunities={allOpps} /></div>
 
       <section aria-label="My events" className="mt-8">
         <h2 className="font-semibold">My Events — Registered · Upcoming · Past</h2>
-        {myEvents.length === 0 ? <p className="mt-2 text-sm opacity-70">Follow societies to see their events here. Registrations save locally (Supabase sync in production).</p> : (
+        {myEvents.length === 0 ? <p className="mt-2 text-sm opacity-70">Follow societies to see their events here. Registrations save on-device and sync to your account when logged in.</p> : (
           <div className="mt-3 grid gap-4 md:grid-cols-2">
-            {myEvents.map((e) => (<EventCard key={e.id} event={e} clashCount={countOverlaps(e, DEMO_EVENTS).length} />))}
+            {myEvents.map((e) => (<EventCard key={e.id} event={e} clashCount={countOverlaps(e, allEvents).length} />))}
           </div>
         )}
       </section>
@@ -55,7 +74,7 @@ export function NsutModeClient(): React.JSX.Element {
       <section aria-label="Opportunities" className="mt-8">
         <h2 className="font-semibold">💼 Opportunities for you</h2>
         <ul className="mt-2 space-y-2">
-          {DEMO_OPPORTUNITIES.filter((o) => followedSlugs.includes(o.societySlug)).map((o) => (
+          {allOpps.filter((o) => followedSlugs.includes(o.societySlug)).map((o) => (
             <li key={o.id} className="rounded-2xl border p-3 text-sm"><strong>{o.title}</strong> — {o.societyName}</li>
           ))}
         </ul>

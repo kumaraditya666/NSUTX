@@ -1,26 +1,69 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { universalSearch } from "@/lib/search";
 import { useUiStore } from "@/stores/nsut-mode";
+import { cn } from "@/lib/utils";
+
+interface Item {
+  key: string;
+  group: string;
+  label: string;
+  detail: string;
+  href: string;
+}
 
 export function SearchOverlay(): React.JSX.Element {
   const searchOpen = useUiStore((s) => s.searchOpen);
   const setSearchOpen = useUiStore((s) => s.setSearchOpen);
   const [query, setQuery] = React.useState("");
+  const [active, setActive] = React.useState(0);
+  const router = useRouter();
   const results = universalSearch(query);
 
+  const items: Item[] = React.useMemo(() => {
+    const list: Item[] = [];
+    for (const s of results.societies) list.push({ key: `s-${s.slug}`, group: "Societies", label: s.name, detail: s.shortDescription, href: `/societies/${s.slug}` });
+    for (const e of results.events) list.push({ key: `e-${e.id}`, group: "Events", label: e.title, detail: e.societyName, href: `/events/${e.id}` });
+    for (const a of results.announcements) list.push({ key: `a-${a.id}`, group: "Announcements", label: a.title, detail: a.societyName, href: `/societies/${a.societySlug}/updates` });
+    for (const o of results.opportunities) list.push({ key: `o-${o.id}`, group: "Opportunities", label: o.title, detail: o.societyName, href: "/opportunities" });
+    for (const g of results.gallery) list.push({ key: `g-${g.id}`, group: "Memories", label: g.title, detail: `${g.societyName} · ${g.year}`, href: "/daily" });
+    return list;
+  }, [results]);
+
+  function go(href: string): void {
+    setSearchOpen(false);
+    router.push(href);
+  }
+
+  function onInputKey(e: React.KeyboardEvent): void {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActive((a) => Math.min(a + 1, items.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((a) => Math.max(a - 1, 0));
+    } else if (e.key === "Enter") {
+      const item = items[active];
+      if (item) go(item.href);
+    }
+  }
+
   React.useEffect(() => {
+    function openPalette(): void {
+      setQuery("");
+      setSearchOpen(true);
+    }
     function onKey(e: KeyboardEvent): void {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setSearchOpen(true);
+        openPalette();
       }
       if (e.key === "Escape") setSearchOpen(false);
     }
     function onOpen(): void {
-      setSearchOpen(true);
+      openPalette();
     }
     window.addEventListener("keydown", onKey);
     document.addEventListener("nsut:open-search", onOpen);
@@ -30,37 +73,62 @@ export function SearchOverlay(): React.JSX.Element {
     };
   }, [setSearchOpen]);
 
+  React.useEffect(() => {
+    document.getElementById(`cmd-item-${active}`)?.scrollIntoView({ block: "nearest" });
+  }, [active]);
+
   if (!searchOpen) return <></>;
+  let lastGroup = "";
   return (
-    <div role="dialog" aria-modal="true" aria-label="Universal search" className="fixed inset-0 z-50 bg-black/50 p-4" onClick={() => setSearchOpen(false)}>
-      <div className="mx-auto max-w-2xl rounded-3xl bg-background p-4" onClick={(e) => e.stopPropagation()}>
-        <label htmlFor="global-search" className="sr-only">Search societies, events, opportunities</label>
+    <div role="dialog" aria-modal="true" aria-label="Search NSUTX" className="fixed inset-0 z-50 bg-black/60 p-4" onClick={() => setSearchOpen(false)}>
+      <div className="mx-auto mt-16 max-w-2xl rounded-2xl border bg-background p-3 shadow-2xl" style={{ borderColor: "var(--hairline)" }} onClick={(e) => e.stopPropagation()}>
+        <label htmlFor="global-search" className="sr-only">Search NSUTX</label>
         <input
           id="global-search"
           autoFocus
+          role="combobox"
+          aria-expanded="true"
+          aria-controls="cmd-listbox"
+          aria-activedescendant={items[active] ? `cmd-item-${active}` : undefined}
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder='Search "photography"…'
-          className="h-12 w-full rounded-2xl border border-black/15 bg-transparent px-4 dark:border-white/20"
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setActive(0);
+          }}
+          onKeyDown={onInputKey}
+          placeholder="Search NSUTX… societies, events, announcements, opportunities"
+          className="h-12 w-full rounded-xl border bg-transparent px-4"
+          style={{ borderColor: "var(--hairline)" }}
         />
-        <div className="mt-4 max-h-96 space-y-4 overflow-auto">
-          {results.societies.length > 0 ? (
-            <section><h3 className="text-sm font-semibold opacity-60">Societies</h3>
-              {results.societies.map((s) => (<Link key={s.slug} href={`/societies/${s.slug}`} onClick={() => setSearchOpen(false)} className="block rounded-xl px-2 py-1.5 hover:bg-black/5 dark:hover:bg-white/10">{s.name} — {s.shortDescription}</Link>))}
-            </section>
+        <div id="cmd-listbox" role="listbox" aria-label="Results" className="mt-2 max-h-80 overflow-auto">
+          {items.map((item, i) => {
+            const header = item.group !== lastGroup ? item.group : null;
+            lastGroup = item.group;
+            return (
+              <React.Fragment key={item.key}>
+                {header ? <p className="px-2 pb-1 pt-3 text-[0.65rem] font-semibold uppercase tracking-[0.2em] opacity-50">{header}</p> : null}
+                <div
+                  id={`cmd-item-${i}`}
+                  role="option"
+                  aria-selected={i === active}
+                  onClick={() => go(item.href)}
+                  onMouseEnter={() => setActive(i)}
+                  className={cn(
+                    "cursor-pointer rounded-xl px-3 py-2",
+                    i === active ? "bg-black/10 dark:bg-white/15" : "",
+                  )}
+                >
+                  <p className="text-sm font-medium">{item.label}</p>
+                  <p className="text-xs opacity-60">{item.detail}</p>
+                </div>
+              </React.Fragment>
+            );
+          })}
+          {query.trim().length > 0 && items.length === 0 ? (
+            <p className="px-2 py-4 text-sm opacity-60">No results. Try “robotics”, “photo”, “finance”.</p>
           ) : null}
-          {results.events.length > 0 ? (
-            <section><h3 className="text-sm font-semibold opacity-60">Events</h3>
-              {results.events.map((e) => (<Link key={e.id} href={`/events/${e.id}`} onClick={() => setSearchOpen(false)} className="block rounded-xl px-2 py-1.5 hover:bg-black/5 dark:hover:bg-white/10">{e.title} — {e.societyName}</Link>))}
-            </section>
-          ) : null}
-          {results.opportunities.length > 0 ? (
-            <section><h3 className="text-sm font-semibold opacity-60">Opportunities</h3>
-              {results.opportunities.map((o) => (<Link key={o.id} href="/opportunities" onClick={() => setSearchOpen(false)} className="block rounded-xl px-2 py-1.5 hover:bg-black/5 dark:hover:bg-white/10">{o.title} — {o.societyName}</Link>))}
-            </section>
-          ) : null}
-          {query.trim().length > 0 && results.societies.length === 0 && results.events.length === 0 ? (
-            <p className="text-sm opacity-60">No verified results. Try “robotics”, “photo”, “finance”.</p>
+          {query.trim().length === 0 ? (
+            <p className="px-2 py-4 text-xs opacity-50">↑↓ navigate · Enter opens · Esc closes</p>
           ) : null}
         </div>
       </div>

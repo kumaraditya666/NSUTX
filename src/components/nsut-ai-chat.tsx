@@ -8,7 +8,7 @@ export function NsutAiChat(): React.JSX.Element {
   const followedSlugs = useNsutModeStore((s) => s.followedSlugs);
   const [input, setInput] = React.useState("");
   const [messages, setMessages] = React.useState<{ role: "user" | "ai"; text: string }[]>([
-    { role: "ai", text: "Hi! I'm NSUT AI (demo, grounded in local data). Ask: What events are happening today? Which societies have recruitment open?" },
+    { role: "ai", text: "Hi! I'm NSUTX AI, grounded in campus data. Ask: What events are happening today? Which societies have recruitment open?" },
   ]);
 
   function send(e: React.FormEvent): void {
@@ -34,7 +34,7 @@ export function NsutAiChat(): React.JSX.Element {
         <input id="ai-input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="What events are happening today?" className="h-11 flex-1 rounded-full border border-black/15 bg-transparent px-4 dark:border-white/20" />
         <button type="submit" className="h-11 rounded-full bg-foreground px-5 text-background">Ask</button>
       </form>
-      <p className="mt-2 text-xs opacity-60">Grounded in demo database. Server-side LLM connects in production with API keys server-only.</p>
+      <p className="mt-2 text-xs opacity-60">Answers come from NSUTX data. API keys stay server-side.</p>
     </div>
   );
 }

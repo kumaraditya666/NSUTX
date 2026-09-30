@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { getSocietyBySlug } from "@/lib/seed-societies";
+import { getSocietyLive } from "@/lib/societies-live";
 import { TeamGrid } from "@/components/team-grid";
 
 export default async function SocietyTeamPage({ params }: { params: Promise<{ slug: string }> }): Promise<React.JSX.Element> {
   const { slug } = await params;
-  const society = getSocietyBySlug(slug);
+  const society = await getSocietyLive(slug);
   if (!society) notFound();
   return (
     <div>

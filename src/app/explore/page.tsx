@@ -1,7 +1,9 @@
 import { CATEGORY_LABELS, SOCIETY_CATEGORIES } from "@/lib/constants";
 import { getLiveSocieties } from "@/lib/societies-live";
-import { SocietyCard } from "@/components/society-card";
+import { getLiveEvents, getLiveOpportunities } from "@/lib/content-live";
+import { SocietyCard, type SocietyCardActivity } from "@/components/society-card";
 import { SectionHeading } from "@/components/states";
+import { FindYourSociety } from "@/components/find-your-society";
 
 export default async function ExplorePage({
   searchParams,
@@ -11,7 +13,21 @@ export default async function ExplorePage({
   const params = await searchParams;
   const q = (params.q ?? "").toLowerCase();
   const category = params.category ?? "";
-  const { societies, live } = await getLiveSocieties();
+  const [{ societies }, { events }, { opportunities }] = await Promise.all([
+    getLiveSocieties(),
+    getLiveEvents(),
+    getLiveOpportunities(),
+  ]);
+  const activityBySlug = new Map<string, SocietyCardActivity>();
+  for (const s of societies) {
+    const upcoming = events.filter((e) => e.societySlug === s.slug && e.status !== "past");
+    const nextTitle = upcoming[0]?.title;
+    activityBySlug.set(s.slug, {
+      upcomingCount: upcoming.length,
+      ...(nextTitle !== undefined ? { nextEventTitle: nextTitle } : {}),
+      recruitmentOpen: opportunities.some((o) => o.societySlug === s.slug && o.status !== "closed"),
+    });
+  }
   const filtered = societies.filter((s) => {
     const matchesQ = q.length === 0 || s.name.toLowerCase().includes(q) || s.shortDescription.toLowerCase().includes(q);
     const matchesCat = category.length === 0 || s.category === category;
@@ -19,7 +35,7 @@ export default async function ExplorePage({
   });
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      <SectionHeading title="Explore Societies" description={live ? "Live from Supabase. Verification required for active status." : "Seed directory. Verification required for active status."} />
+      <SectionHeading title="Explore Societies" description="Every society is a mini-website. Open one to enter." />
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row" role="search">
         <label htmlFor="q" className="sr-only">Search societies</label>
         <input
@@ -45,9 +61,17 @@ export default async function ExplorePage({
       </form>
       <p className="mb-4 text-sm opacity-70" role="status">{filtered.length} societies</p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((s) => (
-          <SocietyCard key={s.slug} society={s} />
-        ))}
+        {filtered.map((s) => {
+          const activity = activityBySlug.get(s.slug);
+          return activity === undefined ? (
+            <SocietyCard key={s.slug} society={s} />
+          ) : (
+            <SocietyCard key={s.slug} society={s} activity={activity} />
+          );
+        })}
+      </div>
+      <div className="mt-10">
+        <FindYourSociety />
       </div>
     </div>
   );

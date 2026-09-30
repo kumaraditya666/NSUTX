@@ -35,8 +35,8 @@ function toSeed(row: SocietyRow): SocietySeed {
     name: row.name,
     slug: row.slug,
     category: (row.category as SocietyCategory) ?? "technical",
-    shortDescription: row.description ?? fallback?.shortDescription ?? "Information coming soon.",
-    description: row.description ?? "Information coming soon.",
+    shortDescription: row.description ?? fallback?.shortDescription ?? "Coming soon.",
+    description: row.description ?? "Coming soon.",
     accentColor: row.accent_color ?? fallback?.accentColor ?? "#0ea5e9",
     socials: fallback?.socials ?? {},
     ...(fallback?.website ? { website: fallback.website } : {}),
@@ -65,4 +65,9 @@ export async function getLiveSocieties(): Promise<{ societies: SocietySeed[]; li
   } catch {
     return { societies: SEED_SOCIETIES, live: false };
   }
+}
+
+export async function getSocietyLive(slug: string): Promise<SocietySeed | undefined> {
+  const { societies } = await getLiveSocieties();
+  return societies.find((s) => s.slug === slug);
 }

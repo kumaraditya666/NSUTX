@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "NSUT Hub",
-    short_name: "NSUT Hub",
-    description: "Everything happening at NSUT. One place.",
+    name: "NSUTX",
+    short_name: "NSUTX",
+    description: "The digital layer of NSUT.",
     start_url: "/",
     display: "standalone",
     background_color: "#0b0b12",

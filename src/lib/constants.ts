@@ -1,8 +1,8 @@
-export const SITE_NAME = "NSUT Hub";
-export const SITE_TAGLINE = "Everything happening at NSUT. One place.";
-export const SITE_HERO_TITLE = "NSUT, but connected.";
-export const SITE_HERO_SUB =
-  "Discover societies, events, opportunities and everything happening around campus.";
+export const SITE_NAME = "NSUTX";
+export const SITE_TAGLINE = "The digital layer of NSUT.";
+export const SITE_HERO_TITLE = "NSUTX";
+export const SITE_HERO_SUB = "The digital layer of NSUT.";
+export const SITE_HERO_LINES = ["Societies.", "Events.", "Opportunities.", "People.", "All connected."] as const;
 
 export const SOCIETY_CATEGORIES = [
   "technical",
@@ -63,7 +63,7 @@ export const MOBILE_NAV_ITEMS = [
   { href: "/explore", label: "Explore" },
   { href: "/live", label: "Live" },
   { href: "/events", label: "Events" },
-  { href: "/nsut-mode", label: "NSUT Mode" },
+  { href: "/nsut-mode", label: "Me" },
 ] as const;
 
-export const FALLBACK_TEXT = "Information coming soon.";
+export const FALLBACK_TEXT = "Coming soon.";

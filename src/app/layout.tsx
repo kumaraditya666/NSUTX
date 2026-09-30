@@ -7,6 +7,8 @@ import { MobileNav } from "@/components/mobile-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { SearchOverlay } from "@/components/search-overlay";
 import { SwRegister } from "@/components/sw-register";
+import { AskNsutx } from "@/components/ask-nsutx";
+import { OfflineIndicator } from "@/components/offline-indicator";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,13 +22,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | NSUT Hub",
-    default: "NSUT Hub — Everything happening at NSUT. One place.",
+    template: "%s | NSUTX",
+    default: "NSUTX — The digital layer of NSUT.",
   },
   description:
-    "Discover societies, events, opportunities and everything happening around NSUT Delhi.",
+    "NSUTX connects NSUT societies, students, events, opportunities, announcements and memories in one platform.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "NSUT Hub" },
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "NSUTX" },
 };
 
 export const viewport: Viewport = {
@@ -50,6 +52,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteFooter />
           <MobileNav />
           <SearchOverlay />
+          <AskNsutx />
+          <OfflineIndicator />
           <SwRegister />
         </Providers>
       </body>

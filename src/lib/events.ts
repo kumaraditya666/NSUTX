@@ -66,7 +66,7 @@ export function countOverlaps(event: EventItem, all: EventItem[]): EventItem[] {
 
 export function formatTime(iso: string): string {
   const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "Information coming soon.";
+  if (Number.isNaN(date.getTime())) return "Date TBA";
   return date.toLocaleString("en-IN", {
     weekday: "short",
     hour: "numeric",

@@ -41,7 +41,7 @@ export function InstallPrompt(): React.JSX.Element {
       }}
       className="rounded-full border px-4 py-1.5 text-sm"
     >
-      ⬇ Install NSUT Hub
+      ⬇ Install NSUTX
     </button>
   );
 }

@@ -1,11 +1,13 @@
-import { DEMO_OPPORTUNITIES } from "@/lib/demo-data";
+import { getLiveOpportunities } from "@/lib/content-live";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { SectionHeading } from "@/components/states";
+import { EmptyState } from "@/components/states";
 
 export default async function OpportunitiesPage({ searchParams }: { searchParams: Promise<{ filter?: string }> }): Promise<React.JSX.Element> {
   const { filter } = await searchParams;
   const f = filter ?? "all";
-  const list = DEMO_OPPORTUNITIES.filter((o) => {
+  const { opportunities } = await getLiveOpportunities();
+  const list = opportunities.filter((o) => {
     if (f === "open") return o.status === "open";
     if (f === "closing") return o.status === "closing-soon";
     return true;
@@ -18,9 +20,11 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
         <a href="/opportunities?filter=open" className="rounded-full border px-3 py-1">Open now</a>
         <a href="/opportunities?filter=closing" className="rounded-full border px-3 py-1">Closing soon</a>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        {list.map((o) => (<OpportunityCard key={o.id} opportunity={o} />))}
-      </div>
+      {list.length === 0 ? <EmptyState title="No opportunities right now." description="Check back soon." /> : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {list.map((o) => (<OpportunityCard key={o.id} opportunity={o} />))}
+        </div>
+      )}
     </div>
   );
 }

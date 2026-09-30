@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getSocietyBySlug } from "@/lib/seed-societies";
+import { getSocietyLive } from "@/lib/societies-live";
 import { DEMO_ANNOUNCEMENTS, DEMO_EVENTS, DEMO_ACHIEVEMENTS, DEMO_GALLERY, DEMO_SOCIETY_DETAILS } from "@/lib/demo-data";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { EmptyState } from "@/components/states";
@@ -19,7 +20,7 @@ export default async function SocietyHome({
   params: Promise<{ slug: string }>;
 }): Promise<React.JSX.Element> {
   const { slug } = await params;
-  const society = getSocietyBySlug(slug);
+  const society = await getSocietyLive(slug);
   if (!society) notFound();
   const events = DEMO_EVENTS.filter((e) => e.societySlug === slug);
   const announcements = DEMO_ANNOUNCEMENTS.filter((a) => a.societySlug === slug);
@@ -30,24 +31,35 @@ export default async function SocietyHome({
     <div>
       <section
         aria-labelledby="society-title"
-        className="overflow-hidden rounded-3xl border border-black/10 p-8 dark:border-white/10"
-        style={{ borderTop: `6px solid ${society.accentColor}` }}
+        className="nsut-grid relative overflow-hidden rounded-2xl border p-8 sm:p-12"
+        style={{ borderColor: "var(--hairline)" }}
       >
-        <div className="flex flex-wrap items-center gap-4">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-1.5"
+          style={{ background: `linear-gradient(90deg, ${society.accentColor}, transparent)` }}
+        />
+        <p className="eyebrow">{society.category}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-4">
           <span aria-hidden="true" className="flex h-16 w-16 items-center justify-center rounded-2xl text-2xl font-bold text-white" style={{ backgroundColor: society.accentColor }}>
             {society.name.slice(0, 1)}
           </span>
           <div>
-            <h1 id="society-title" className="text-3xl font-bold tracking-tight">{society.name}</h1>
-            <p className="opacity-70">{society.shortDescription}</p>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <VerifiedBadge verified={society.verified} />
-            <FollowButton slug={society.slug} name={society.name} />
+            <h1 id="society-title" className="text-4xl font-bold tracking-tighter sm:text-5xl">{society.name}</h1>
+            <p className="mt-1 opacity-70">{society.shortDescription}</p>
           </div>
         </div>
         <p className="mt-4 max-w-2xl">{mission ?? society.description ?? FALLBACK_TEXT}</p>
-        {!mission ? <p className="mt-1 text-xs opacity-50">DEMO mini-site shell — society admins publish real content after verification.</p> : <p className="mt-1 text-xs opacity-50">DEMO content for template review.</p>}
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          <Link href={`/societies/${slug}/events`} className="rounded-full bg-foreground px-5 py-2 text-sm font-semibold text-background">
+            Explore
+          </Link>
+          <FollowButton slug={society.slug} name={society.name} />
+          <Link href={`/societies/${slug}/opportunities`} className="rounded-full border px-5 py-2 text-sm font-medium" style={{ borderColor: "var(--hairline)" }}>
+            Join
+          </Link>
+          <VerifiedBadge verified={society.verified} />
+        </div>
       </section>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">

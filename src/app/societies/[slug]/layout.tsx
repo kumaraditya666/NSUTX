@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getSocietyBySlug } from "@/lib/seed-societies";
+import { getSocietyLive } from "@/lib/societies-live";
 
 const TABS = [
   { href: "", label: "Home" },
@@ -21,7 +21,7 @@ export default async function SocietyLayout({
   params: Promise<{ slug: string }>;
 }): Promise<React.JSX.Element> {
   const { slug } = await params;
-  const society = getSocietyBySlug(slug);
+  const society = await getSocietyLive(slug);
   if (!society) notFound();
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

@@ -11,7 +11,7 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }): 
       <h3 className="mt-2 font-bold">{opportunity.title}</h3>
       <p className="text-sm opacity-70">{opportunity.societyName} · {opportunity.description}</p>
       <p className="mt-2 text-xs opacity-60">
-        {opportunity.deadline ? `Deadline: ${new Date(opportunity.deadline).toLocaleDateString("en-IN")}` : "Deadline: Information coming soon."}
+        {opportunity.deadline ? `Deadline: ${new Date(opportunity.deadline).toLocaleDateString("en-IN")}` : "Deadline: TBA"}
         {opportunity.eligibility ? ` · ${opportunity.eligibility}` : ""}
       </p>
     </article>

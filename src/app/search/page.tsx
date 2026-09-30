@@ -9,10 +9,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     <div className="mx-auto max-w-6xl px-4 py-10">
       <SectionHeading title="Universal Search" description="Fuzzy search across societies, events, updates, opportunities, gallery. Press Ctrl+K anywhere." />
       <form method="get" role="search" className="mb-6">
-        <label htmlFor="search-q" className="sr-only">Search NSUT Hub</label>
+        <label htmlFor="search-q" className="sr-only">Search NSUTX</label>
         <input id="search-q" name="q" defaultValue={q ?? ""} placeholder='Try "photography"…' className="h-12 w-full rounded-2xl border border-black/15 bg-transparent px-4 dark:border-white/20" />
       </form>
-      {(q ?? "").trim().length === 0 ? <p className="opacity-70">Type to search demo data.</p> : (
+      {(q ?? "").trim().length === 0 ? <p className="opacity-70">Type to search NSUTX.</p> : (
         <div className="space-y-6">
           <section><h2 className="font-semibold">Societies ({results.societies.length})</h2>
             {results.societies.map((s) => (<Link key={s.slug} href={`/societies/${s.slug}`} className="block py-1 underline-offset-4 hover:underline">{s.name}</Link>))}</section>

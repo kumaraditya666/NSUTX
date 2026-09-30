@@ -13,16 +13,11 @@ export function SiteHeader(): React.JSX.Element {
         Skip to main content
       </a>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight" aria-label="NSUT Hub home">
-          <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground text-background">
-            N
+        <Link href="/" className="flex items-center gap-2 font-bold tracking-tighter" aria-label="NSUTX home">
+          <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-sm text-background">
+            X
           </span>
-          <span>
-            NSUT Hub
-            <span className="ml-2 hidden rounded-full bg-black/5 px-2 py-0.5 text-xs font-medium sm:inline dark:bg-white/10">
-              Beta
-            </span>
-          </span>
+          <span>NSUTX</span>
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map((item) => (

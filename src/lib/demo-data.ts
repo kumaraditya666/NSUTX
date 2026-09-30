@@ -29,8 +29,8 @@ function hoursFromNow(hours: number, durationHours = 2): { startsAt: string; end
   return { startsAt: start.toISOString(), endsAt: end.toISOString() };
 }
 
-// Clearly marked DEMO content for 3 societies so the template can be reviewed
-// end-to-end. All other societies remain seed-minimal with "Information coming soon."
+// Fallback content used only when Supabase is unconfigured or tables are empty.
+// Live database rows always take precedence (see content-live.ts).
 export const DEMO_EVENTS: EventItem[] = [
   { id: "evt-acm-workshop", title: "ACM Workshop: Intro to Systems", societySlug: "ieee", societyName: "IEEE NSUT", ...hoursFromNow(-1), venue: "CS Block", status: "live", registrationOpen: true, eligibility: "All NSUT students", capacity: 120 },
   { id: "evt-crescendo-aud", title: "Crescendo Auditions", societySlug: "crescendo", societyName: "Crescendo", ...hoursFromNow(0.6), venue: "Main Auditorium", status: "starting-soon", registrationOpen: true },
@@ -41,33 +41,33 @@ export const DEMO_EVENTS: EventItem[] = [
 ];
 
 export const DEMO_ANNOUNCEMENTS: Announcement[] = [
-  { id: "ann-ieee-1", societySlug: "ieee", societyName: "IEEE NSUT", title: "Edge AI workshop registrations open", body: "DEMO: 80 seats, APJ Hall. Bring a laptop.", pinned: true, publishedAt: new Date(Date.now() - 2 * 3600_000).toISOString() },
-  { id: "ann-junoon-1", societySlug: "junoon", societyName: "Junoon", title: "Photo walk this weekend", body: "DEMO: Admin Block meetup. All skill levels welcome.", pinned: true, publishedAt: new Date(Date.now() - 5 * 3600_000).toISOString() },
-  { id: "ann-fes-1", societySlug: "fes", societyName: "FES", title: "Markets 101 session", body: "DEMO: Intro session on markets and personal finance.", pinned: false, publishedAt: new Date(Date.now() - 8 * 3600_000).toISOString() },
-  { id: "ann-ares-1", societySlug: "ares", societyName: "ARES", title: "Robotics recruitment opens soon", body: "DEMO: Recruitment notice.", pinned: false, publishedAt: new Date(Date.now() - 26 * 3600_000).toISOString() },
+  { id: "ann-ieee-1", societySlug: "ieee", societyName: "IEEE NSUT", title: "Edge AI workshop registrations open", body: "80 seats, APJ Hall. Bring a laptop.", pinned: true, publishedAt: new Date(Date.now() - 2 * 3600_000).toISOString() },
+  { id: "ann-junoon-1", societySlug: "junoon", societyName: "Junoon", title: "Photo walk this weekend", body: "Admin Block meetup. All skill levels welcome.", pinned: true, publishedAt: new Date(Date.now() - 5 * 3600_000).toISOString() },
+  { id: "ann-fes-1", societySlug: "fes", societyName: "FES", title: "Markets 101 session", body: "Intro session on markets and personal finance.", pinned: false, publishedAt: new Date(Date.now() - 8 * 3600_000).toISOString() },
+  { id: "ann-ares-1", societySlug: "ares", societyName: "ARES", title: "Robotics recruitment opens soon", body: "Recruitment notice.", pinned: false, publishedAt: new Date(Date.now() - 26 * 3600_000).toISOString() },
 ];
 
 export const DEMO_OPPORTUNITIES: Opportunity[] = [
-  { id: "opp-ieee-core", societySlug: "ieee", societyName: "IEEE NSUT", title: "Core team applications", description: "DEMO: Apply for tech, PR, design and operations roles.", type: "Core team", deadline: new Date(Date.now() + 3 * 86400_000).toISOString(), eligibility: "2nd year+", status: "open" },
-  { id: "opp-ares-recruit", societySlug: "ares", societyName: "ARES", title: "Robotics recruitment", description: "DEMO: Mechanical, embedded and software roles.", type: "Recruitment", deadline: new Date(Date.now() + 1 * 86400_000).toISOString(), status: "closing-soon" },
-  { id: "opp-junoon-vol", societySlug: "junoon", societyName: "Junoon", title: "Fest photography volunteers", description: "DEMO: Cover Moksha with the Junoon crew.", type: "Volunteers", status: "open" },
-  { id: "opp-fes-comp", societySlug: "fes", societyName: "FES", title: "Paper trading competition", description: "DEMO: 1-week virtual trading challenge.", type: "Competition", deadline: new Date(Date.now() + 6 * 86400_000).toISOString(), status: "open" },
+  { id: "opp-ieee-core", societySlug: "ieee", societyName: "IEEE NSUT", title: "Core team applications", description: "Apply for tech, PR, design and operations roles.", type: "Core team", deadline: new Date(Date.now() + 3 * 86400_000).toISOString(), eligibility: "2nd year+", status: "open" },
+  { id: "opp-ares-recruit", societySlug: "ares", societyName: "ARES", title: "Robotics recruitment", description: "Mechanical, embedded and software roles.", type: "Recruitment", deadline: new Date(Date.now() + 1 * 86400_000).toISOString(), status: "closing-soon" },
+  { id: "opp-junoon-vol", societySlug: "junoon", societyName: "Junoon", title: "Fest photography volunteers", description: "Cover Moksha with the Junoon crew.", type: "Volunteers", status: "open" },
+  { id: "opp-fes-comp", societySlug: "fes", societyName: "FES", title: "Paper trading competition", description: "1-week virtual trading challenge.", type: "Competition", deadline: new Date(Date.now() + 6 * 86400_000).toISOString(), status: "open" },
 ];
 
 export const DEMO_TEAM: Record<string, DemoTeamMember[]> = {
   ieee: [
-    { name: "Demo President", role: "President", department: "Leadership" },
-    { name: "Demo VP", role: "Vice President", department: "Leadership" },
-    { name: "Demo Tech Lead", role: "Secretary", department: "Technical" },
-    { name: "Demo Designer", role: "Secretary", department: "Design" },
+    { name: "TBA", role: "President", department: "Leadership" },
+    { name: "TBA", role: "Vice President", department: "Leadership" },
+    { name: "TBA", role: "Secretary", department: "Technical" },
+    { name: "TBA", role: "Secretary", department: "Design" },
   ],
   junoon: [
-    { name: "Demo President", role: "President", department: "Leadership" },
-    { name: "Demo Curator", role: "Secretary", department: "Photography" },
+    { name: "TBA", role: "President", department: "Leadership" },
+    { name: "TBA", role: "Secretary", department: "Photography" },
   ],
   fes: [
-    { name: "Demo President", role: "President", department: "Leadership" },
-    { name: "Demo Analyst", role: "Secretary", department: "Research" },
+    { name: "TBA", role: "President", department: "Leadership" },
+    { name: "TBA", role: "Secretary", department: "Research" },
   ],
 };
 
@@ -81,18 +81,18 @@ export const DEMO_GALLERY: DemoGalleryItem[] = [
 
 export const DEMO_ACHIEVEMENTS: Record<string, DemoAchievement[]> = {
   ieee: [
-    { year: 2026, title: "Hosted Edge AI workshop", detail: "DEMO: 80 participants.", icon: "🎤" },
-    { year: 2025, title: "Inter-college hackathon finalists", detail: "DEMO: Placeholder archive entry.", icon: "🏆" },
+    { year: 2026, title: "Hosted Edge AI workshop", detail: "80 participants.", icon: "🎤" },
+    { year: 2025, title: "Inter-college hackathon finalists", detail: "Awaiting verified archive entry.", icon: "🏆" },
   ],
-  junoon: [{ year: 2025, title: "Annual photo exhibition", detail: "DEMO: Placeholder archive entry.", icon: "📸" }],
-  fes: [{ year: 2026, title: "Trading competition", detail: "DEMO: Placeholder archive entry.", icon: "📈" }],
+  junoon: [{ year: 2025, title: "Annual photo exhibition", detail: "Awaiting verified archive entry.", icon: "📸" }],
+  fes: [{ year: 2026, title: "Trading competition", detail: "Awaiting verified archive entry.", icon: "📈" }],
 };
 
 export const DEMO_SOCIETY_DETAILS: Record<string, { mission: string; interests: string[] }> = {
-  ieee: { mission: "DEMO: Advancing technology and innovation at NSUT.", interests: ["coding", "robotics", "science", "gaming"] },
-  junoon: { mission: "DEMO: Photography community at NSUT.", interests: ["photography", "media", "design"] },
-  fes: { mission: "DEMO: Finance and economics community.", interests: ["finance", "debate", "literature"] },
-  crescendo: { mission: "DEMO: Music society.", interests: ["music", "drama"] },
-  mirage: { mission: "DEMO: Western dance crew.", interests: ["dance", "music"] },
-  ares: { mission: "DEMO: Robotics society.", interests: ["robotics", "coding", "science", "automotive"] },
+  ieee: { mission: "Advancing technology and innovation at NSUT.", interests: ["coding", "robotics", "science", "gaming"] },
+  junoon: { mission: "Photography community at NSUT.", interests: ["photography", "media", "design"] },
+  fes: { mission: "Finance and economics community.", interests: ["finance", "debate", "literature"] },
+  crescendo: { mission: "Music society.", interests: ["music", "drama"] },
+  mirage: { mission: "Western dance crew.", interests: ["dance", "music"] },
+  ares: { mission: "Robotics society.", interests: ["robotics", "coding", "science", "automotive"] },
 };

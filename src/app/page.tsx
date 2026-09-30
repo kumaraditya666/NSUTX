@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE_HERO_SUB, SITE_HERO_TITLE } from "@/lib/constants";
+import { SITE_HERO_LINES, SITE_HERO_SUB, SITE_HERO_TITLE } from "@/lib/constants";
 import { getLiveSocieties } from "@/lib/societies-live";
 import { getLiveAnnouncements, getLiveEvents, getLiveOpportunities } from "@/lib/content-live";
 import { DEMO_GALLERY } from "@/lib/demo-data";
@@ -10,12 +10,17 @@ import { HeroActions } from "@/components/hero-actions";
 import { HeroVisual } from "@/components/hero-visual";
 import { SocietyRadar } from "@/components/society-radar";
 import { LiveSection } from "@/components/live-section";
-import { DailyDigest } from "@/components/daily-digest";
 import { EventCard } from "@/components/event-card";
-import { OpportunityCard } from "@/components/opportunity-card";
-import { FindYourSociety } from "@/components/find-your-society";
-import { EasterEgg, InstallPrompt } from "@/components/extras";
+import { InstallPrompt } from "@/components/extras";
 import { countOverlaps } from "@/lib/events";
+
+function SectionLink({ href, label }: { href: string; label: string }): React.JSX.Element {
+  return (
+    <Link href={href} className="text-sm font-medium opacity-70 transition-opacity hover:opacity-100">
+      {label} <span aria-hidden="true">→</span>
+    </Link>
+  );
+}
 
 export default async function Home(): Promise<React.JSX.Element> {
   const [{ societies }, { events }, { announcements }, { opportunities }] = await Promise.all([
@@ -24,113 +29,114 @@ export default async function Home(): Promise<React.JSX.Element> {
     getLiveAnnouncements(),
     getLiveOpportunities(),
   ]);
-  const featured = societies.slice(0, 6);
+  const activityBySlug = new Map<string, number>();
+  for (const s of societies) {
+    const score =
+      events.filter((e) => e.societySlug === s.slug && e.status !== "past").length * 3 +
+      announcements.filter((a) => a.societySlug === s.slug).length * 2 +
+      opportunities.filter((o) => o.societySlug === s.slug && o.status !== "closed").length * 2;
+    activityBySlug.set(s.slug, Math.min(1, 0.2 + score * 0.15));
+  }
   return (
     <div className="mx-auto max-w-6xl px-4">
-      <section aria-labelledby="hero-heading" className="py-12 text-center sm:py-16">
-        <HeroVisual />
-        <p className="mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-black/10 px-3 py-1 text-xs dark:border-white/15">
-          NSUT Delhi · Digital Campus <InstallPrompt />
-        </p>
-        <h1 id="hero-heading" className="mx-auto mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-6xl">
+      {/* 1. HERO */}
+      <section aria-labelledby="hero-heading" className="pb-10 pt-12 text-center sm:pt-16">
+        <p className="eyebrow">Netaji Subhas University of Technology</p>
+        <h1 id="hero-heading" className="mx-auto mt-3 text-6xl font-bold tracking-tighter sm:text-8xl">
           {SITE_HERO_TITLE}
         </h1>
-        <p className="mx-auto mt-3 max-w-xl opacity-70">{SITE_HERO_SUB}</p>
+        <p className="mx-auto mt-2 text-lg font-medium uppercase tracking-[0.2em] opacity-80 sm:text-xl">
+          {SITE_HERO_SUB}
+        </p>
+        <div className="mx-auto mt-4 max-w-xl space-y-0.5 text-sm opacity-60">
+          {SITE_HERO_LINES.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
         <HeroActions />
+        <div className="mt-10">
+          <HeroVisual />
+        </div>
+        <p className="mx-auto mt-4 inline-flex items-center gap-2 text-xs opacity-60">
+          NSUT Delhi · Digital Campus <InstallPrompt />
+        </p>
       </section>
 
-      <section aria-label="NSUT Live" className="py-8">
-        <SectionHeading title="NSUT Live" description="Happening now · Starting soon · Registration open" />
-        <LiveSection />
-        <div className="mt-3"><Link href="/live" className="underline underline-offset-4">Open Live →</Link></div>
+      {/* 2. NSUT LIVE */}
+      <section aria-label="NSUT Live" className="py-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <SectionHeading title="NSUT Live" description="Happening now · Starting soon · Registration open" />
+          <SectionLink href="/live" label="Command center" />
+        </div>
+        <LiveSection events={events} announcements={announcements} opportunities={opportunities} />
       </section>
 
-      <section aria-label="Society Radar" className="py-8">
-        <SectionHeading title="Society Radar" description="Activity visualization — not a ranking." />
-        <SocietyRadar />
-      </section>
-
-      <section aria-label="Today's Events" className="py-8">
-        <SectionHeading title="Today's Events" description="Includes overlap warnings. Admins decide." />
-        <div className="grid gap-4 md:grid-cols-2">
-          {events.slice(0, 4).map((e) => (
+      {/* 3. TODAY AT NSUT */}
+      <section aria-label="Today at NSUT" className="py-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <SectionHeading title="Today at NSUT" description="Overlap warnings on. Admins decide." />
+          <SectionLink href="/events" label="All events" />
+        </div>
+        <div className="hscroll">
+          {events.slice(0, 6).map((e) => (
             <EventCard key={e.id} event={e} clashCount={countOverlaps(e, events).length} />
           ))}
         </div>
       </section>
 
-      <section aria-label="NSUT Daily" className="py-8">
-        <SectionHeading title="NSUT Daily" description="Daily campus digest." />
-        <DailyDigest />
-        <div className="mt-3"><Link href="/daily" className="underline underline-offset-4">Open Daily →</Link></div>
-      </section>
-
-      <section aria-label="Trending" className="py-8">
-        <SectionHeading title="Trending / Recent Updates" />
-        <ul className="grid gap-3 md:grid-cols-2">
-          {announcements.slice(0, 4).map((a) => (
-            <li key={a.id} className="rounded-2xl border border-black/10 p-4 dark:border-white/10">
-              <p className="text-xs opacity-60">{a.societyName}{a.pinned ? " · 📌" : ""}</p>
-              <p className="font-semibold">{a.title}</p>
-              <p className="text-sm opacity-70">{a.body}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section aria-label="Opportunities" className="py-8">
-        <SectionHeading title="Open Opportunities" />
-        <div className="grid gap-4 md:grid-cols-2">
-          {opportunities.slice(0, 4).map((o) => (
-            <OpportunityCard key={o.id} opportunity={o} />
+      {/* 4. EXPLORE */}
+      <section aria-label="Explore" className="py-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <SectionHeading title="Explore" description={`${societies.length} societies · Each one a mini-website`} />
+          <SectionLink href="/explore" label="All societies" />
+        </div>
+        <div className="hscroll">
+          {societies.slice(0, 8).map((s) => (
+            <SocietyCard key={s.slug} society={s} />
           ))}
         </div>
-        <div className="mt-4"><Link href="/opportunities"><Button variant="secondary">Browse opportunities</Button></Link></div>
       </section>
 
-      <section aria-label="Explore" className="py-8">
-        <SectionHeading title="Explore Societies" description={`${societies.length} seed entries. Admin verification required.`} />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((s) => (<SocietyCard key={s.slug} society={s} />))}
+      {/* 5. NSUT RADAR */}
+      <section aria-label="NSUT Radar" className="py-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <SectionHeading title="NSUT Radar" description="Activity visualization — not a ranking." />
+          <SectionLink href="/explore" label="Find your society" />
         </div>
-        <div className="mt-4"><Link href="/explore" className="underline underline-offset-4">Explore all societies</Link></div>
+        <SocietyRadar activityBySlug={activityBySlug} />
       </section>
 
-      <section aria-label="Find your society" className="py-8">
-        <FindYourSociety />
+      {/* 6. NSUT MODE */}
+      <section aria-label="NSUT Mode" className="py-10">
+        <div className="panel flex flex-col gap-4 rounded-2xl p-8 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="eyebrow">Personal</p>
+            <h2 className="mt-1 text-3xl font-bold tracking-tight">NSUT Mode</h2>
+            <p className="mt-1 max-w-md opacity-70">
+              Your year, your interests, your societies. {opportunities.length} open opportunities waiting.
+            </p>
+          </div>
+          <Link href="/nsut-mode">
+            <Button size="lg">Enter NSUT Mode</Button>
+          </Link>
+        </div>
       </section>
 
-      <section aria-label="Memory Wall" className="py-8">
-        <SectionHeading title="Memory Wall" description="Moksha 2026 + society highlights (demo)." />
-        <div className="grid gap-3 sm:grid-cols-3">
-          {DEMO_GALLERY.slice(0, 3).map((g) => (
-            <div key={g.id} className="rounded-2xl border border-black/10 p-4 dark:border-white/10">
+      {/* 7. MEMORY WALL */}
+      <section aria-label="Memory Wall" className="py-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <SectionHeading title="Memory Wall" description="Moksha 2026 + society highlights." />
+          <SectionLink href="/daily" label="Daily + memories" />
+        </div>
+        <div className="hscroll">
+          {DEMO_GALLERY.slice(0, 5).map((g) => (
+            <div key={g.id} className="panel rounded-2xl p-5">
               <p className="font-semibold">{g.title}</p>
-              <p className="text-xs opacity-60">{g.societyName} · {g.year}</p>
+              <p className="mt-1 text-xs opacity-60">{g.societyName} · {g.year}</p>
             </div>
           ))}
         </div>
-        <div className="mt-3"><Link href="/search?q=moksha" className="underline underline-offset-4">Open memories →</Link></div>
-      </section>
-
-      <section aria-label="Major events" className="py-8">
-        <SectionHeading title="Upcoming Major Events" />
-        <div className="grid gap-3 md:grid-cols-3">
-          {["Moksha", "Innovision", "Resonanz"].map((f) => (
-            <div key={f} className="rounded-2xl border border-black/10 p-5 dark:border-white/10">
-              <p className="font-bold">{f}</p>
-              <p className="text-sm opacity-60">Information coming soon. Verified dates only.</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section aria-label="NSUT Mode" className="py-8">
-        <SectionHeading title="NSUT Mode preview" description="Personalized student dashboard." />
-        <Link href="/nsut-mode"><Button>Open NSUT Mode</Button></Link>
-        <div className="mt-6"><EasterEgg /></div>
       </section>
     </div>
   );
 }
-

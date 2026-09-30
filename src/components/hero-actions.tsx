@@ -9,19 +9,20 @@ export function HeroActions(): React.JSX.Element {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
+      className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
     >
       <Link
         href="/explore"
-        className="inline-flex h-12 items-center rounded-full bg-foreground px-6 font-medium text-background"
+        className="inline-flex h-12 items-center rounded-full bg-foreground px-8 text-sm font-semibold tracking-wide text-background transition-transform hover:scale-[1.03]"
       >
-        Explore Societies
+        EXPLORE NSUT
       </Link>
       <Link
-        href="/live"
-        className="inline-flex h-12 items-center rounded-full border border-black/15 px-6 font-medium dark:border-white/20"
+        href="/nsut-mode"
+        className="inline-flex h-12 items-center rounded-full border px-8 text-sm font-semibold tracking-wide transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+        style={{ borderColor: "var(--hairline)" }}
       >
-        What&apos;s Happening?
+        ENTER NSUT MODE
       </Link>
     </motion.div>
   );

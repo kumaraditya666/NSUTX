@@ -53,7 +53,7 @@ export async function getLiveEvents(): Promise<{ events: EventItem[]; live: bool
       societyName: r.societies?.name ?? "NSUT Society",
       startsAt: r.starts_at,
       endsAt: r.ends_at,
-      venue: r.venue ?? "Information coming soon.",
+      venue: r.venue ?? "Venue TBA",
       status: getEventStatus(r.starts_at, r.ends_at),
       registrationOpen: true,
     })),

@@ -1,15 +1,17 @@
 import Link from "next/link";
 import type { EventItem } from "@/types/society";
 import { Badge } from "@/components/ui/badge";
-import { formatTime, minutesUntil } from "@/lib/events";
+import { EventCountdown } from "@/components/event-countdown";
+import { formatTime } from "@/lib/events";
 import { cn } from "@/lib/utils";
 
 export function EventCard({ event, clashCount = 0 }: { event: EventItem; clashCount?: number }): React.JSX.Element {
   return (
-    <article className="rounded-2xl border border-black/10 p-5 dark:border-white/10">
+    <article className="panel rounded-2xl p-5">
       <div className="flex flex-wrap items-center gap-2">
-        {event.status === "live" ? <Badge variant="live">🔴 LIVE</Badge> : null}
-        {event.status === "starting-soon" ? <Badge variant="soon">🟡 Starting in {minutesUntil(event.startsAt)} min</Badge> : null}
+        {event.status === "live" ? <Badge variant="live">🔴 <EventCountdown startsAt={event.startsAt} endsAt={event.endsAt} /></Badge> : null}
+        {event.status === "starting-soon" ? <Badge variant="soon">🟡 <EventCountdown startsAt={event.startsAt} endsAt={event.endsAt} /></Badge> : null}
+        {event.status === "upcoming" ? <Badge variant="muted"><EventCountdown startsAt={event.startsAt} endsAt={event.endsAt} /></Badge> : null}
         {event.registrationOpen ? <Badge variant="open">🟢 Registration open</Badge> : null}
         {clashCount > 0 ? <Badge variant="muted">⚠ {clashCount + 1} overlap</Badge> : null}
       </div>

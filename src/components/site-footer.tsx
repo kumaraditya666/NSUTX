@@ -2,19 +2,19 @@ import Link from "next/link";
 
 export function SiteFooter(): React.JSX.Element {
   return (
-    <footer className="border-t border-black/10 py-10 dark:border-white/10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="font-bold">NSUT Hub</p>
-          <p className="text-sm opacity-70">Everything happening at NSUT. One place.</p>
-        </div>
-        <nav aria-label="Footer" className="flex flex-wrap gap-4 text-sm">
-          <Link href="/explore" className="opacity-70 hover:opacity-100">Societies</Link>
+    <footer className="mt-8 border-t py-12" style={{ borderColor: "var(--hairline)" }}>
+      <div className="mx-auto max-w-6xl px-4">
+        <p className="text-2xl font-bold tracking-tighter">NSUTX</p>
+        <p className="mt-1 text-sm opacity-60">The digital layer of NSUT.</p>
+        <nav aria-label="Footer" className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          <Link href="/explore" className="opacity-70 hover:opacity-100">Explore</Link>
+          <Link href="/societies" className="opacity-70 hover:opacity-100">Societies</Link>
           <Link href="/events" className="opacity-70 hover:opacity-100">Events</Link>
           <Link href="/opportunities" className="opacity-70 hover:opacity-100">Opportunities</Link>
-          <Link href="/daily" className="opacity-70 hover:opacity-100">NSUT Daily</Link>
+          <Link href="/nsut-mode" className="opacity-70 hover:opacity-100">NSUT Mode</Link>
           <Link href="/ai" className="opacity-70 hover:opacity-100">NSUT AI</Link>
         </nav>
+        <p className="mt-8 text-xs opacity-50">Built for NSUT.</p>
       </div>
     </footer>
   );

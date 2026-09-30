@@ -16,9 +16,9 @@ export default function LoginPage(): React.JSX.Element {
         email,
         options: { emailRedirectTo: `${window.location.origin}/nsut-mode` },
       });
-      setStatus(error ? `Error: ${error.message}` : `✓ Magic link sent to ${email}. Demo works without keys; connect Supabase for real auth.`);
+      setStatus(error ? `Error: ${error.message}` : `✓ Magic link sent to ${email}. Check your inbox.`);
     } catch (err) {
-      setStatus(`Demo mode: magic link would go to ${email}. ${(err as Error).message}`);
+      setStatus(`Something went wrong signing in. ${(err as Error).message}`);
     }
   }
 
