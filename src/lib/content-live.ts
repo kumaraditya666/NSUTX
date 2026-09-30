@@ -100,24 +100,33 @@ interface OpportunityRow {
   title: string;
   description: string | null;
   type: string | null;
+  deadline: string | null;
+  eligibility: string | null;
   status: string | null;
   societies: { slug: string; name: string } | null;
 }
 
 export async function getLiveOpportunities(): Promise<{ opportunities: Opportunity[]; live: boolean }> {
   if (!configured()) return { opportunities: DEMO_OPPORTUNITIES, live: false };
-  const rows = await get<OpportunityRow>("opportunities?select=id,title,description,type,status,societies(slug,name)&limit=30");
+  const rows = await get<OpportunityRow>("opportunities?select=id,title,description,type,deadline,eligibility,status,societies(slug,name)&limit=30");
   if (!rows || rows.length === 0) return { opportunities: DEMO_OPPORTUNITIES, live: false };
+  const now = Date.now();
   return {
     live: true,
-    opportunities: rows.map((r) => ({
-      id: r.id,
-      societySlug: r.societies?.slug ?? "unknown",
-      societyName: r.societies?.name ?? "NSUT Society",
-      title: r.title,
-      description: r.description ?? "",
-      type: r.type ?? "opportunity",
-      status: (r.status === "closing-soon" ? "closing-soon" : r.status === "closed" ? "closed" : "open") as Opportunity["status"],
-    })),
+    opportunities: rows.map((r) => {
+      const deadlinePassed = r.deadline ? new Date(r.deadline).getTime() < now : false;
+      return {
+        id: r.id,
+        societySlug: r.societies?.slug ?? "unknown",
+        societyName: r.societies?.name ?? "NSUT Society",
+        title: r.title,
+        description: r.description ?? "",
+        type: r.type ?? "opportunity",
+        ...(r.deadline ? { deadline: r.deadline } : {}),
+        ...(r.eligibility ? { eligibility: r.eligibility } : {}),
+        // Deadline truth overrides the stored flag — a passed deadline is CLOSED.
+        status: (deadlinePassed || r.status === "closed" ? "closed" : r.status === "closing-soon" ? "closing-soon" : "open") as Opportunity["status"],
+      };
+    }),
   };
 }

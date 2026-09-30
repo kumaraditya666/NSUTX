@@ -1,14 +1,11 @@
 import Link from "next/link";
 import type { SocietySeed } from "@/types/society";
+import type { CardActivity } from "@/lib/society-config";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { FollowButton } from "@/components/follow-button";
 import { FALLBACK_TEXT } from "@/lib/constants";
 
-export interface SocietyCardActivity {
-  upcomingCount: number;
-  nextEventTitle?: string;
-  recruitmentOpen: boolean;
-}
+export type SocietyCardActivity = CardActivity;
 
 export function SocietyCard({
   society,
@@ -76,7 +73,7 @@ export function SocietyCard({
             className="rounded-full border px-4 py-1.5 text-sm font-medium transition-all duration-200 hover:gap-3"
             style={{ borderColor: "var(--hairline)" }}
           >
-            Visit <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
+            Open site <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
           </Link>
         </div>
       </div>

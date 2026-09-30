@@ -2,12 +2,13 @@
 
 import { INTEREST_OPTIONS } from "@/lib/constants";
 import { SEED_SOCIETIES } from "@/lib/seed-societies";
-import { DEMO_ANNOUNCEMENTS, DEMO_EVENTS, DEMO_OPPORTUNITIES, DEMO_SOCIETY_DETAILS } from "@/lib/demo-data";
+import { DEMO_ANNOUNCEMENTS, DEMO_EVENTS, DEMO_GALLERY, DEMO_OPPORTUNITIES, DEMO_SOCIETY_DETAILS } from "@/lib/demo-data";
 import type { Announcement, EventItem, Opportunity, SocietySeed } from "@/types/society";
 import { SocietyCard } from "@/components/society-card";
 import { EventCard } from "@/components/event-card";
 import { DailyDigest } from "@/components/daily-digest";
 import { useNsutModeStore } from "@/stores/nsut-mode";
+import { useMyEvents } from "@/components/register-button";
 import { countOverlaps } from "@/lib/events";
 
 const YEARS = ["1st", "2nd", "3rd", "4th"];
@@ -36,6 +37,8 @@ export function NsutModeClient({
   const followed = allSocieties.filter((s) => followedSlugs.includes(s.slug));
   const feed = allAnns.filter((a) => followedSlugs.includes(a.societySlug));
   const myEvents = allEvents.filter((e) => followedSlugs.includes(e.societySlug));
+  const savedEvents = useMyEvents(allEvents);
+  const recentMemories = DEMO_GALLERY.filter((g) => followedSlugs.includes(g.societySlug)).slice(0, 3);
   const recommended = allSocieties.filter((s) => {
     if (followedSlugs.includes(s.slug)) return false;
     const tags = DEMO_SOCIETY_DETAILS[s.slug]?.interests ?? [s.category];
@@ -63,7 +66,7 @@ export function NsutModeClient({
       </section>
 
       <section aria-label="Society updates" className="mt-8">
-        <h2 className="font-semibold">📢 Society updates</h2>
+        <h2 className="font-semibold">📢 Your feed</h2>
         {feed.length === 0 ? <p className="mt-2 text-sm opacity-70">No updates from followed societies yet.</p> : (
           <ul className="mt-2 space-y-2">
             {feed.map((a) => (<li key={a.id} className="rounded-2xl border p-3 text-sm"><strong>{a.societyName}:</strong> {a.title}</li>))}
@@ -96,6 +99,30 @@ export function NsutModeClient({
                   <span className="opacity-60">{o.deadline ? new Date(o.deadline).toLocaleDateString("en-IN") : "TBA"}</span>
                 </li>
               ))}
+          </ul>
+        )}
+      </section>
+
+      <section aria-label="Saved events" className="mt-8">
+        <h2 className="font-semibold">🔖 Saved events</h2>
+        {savedEvents.length === 0 ? (
+          <p className="mt-2 text-sm opacity-70">Nothing saved yet. Hit Register on any event.</p>
+        ) : (
+          <div className="mt-3 grid gap-4 md:grid-cols-2">
+            {savedEvents.map((e) => (<EventCard key={e.id} event={e} />))}
+          </div>
+        )}
+      </section>
+
+      <section aria-label="Recent memories" className="mt-8">
+        <h2 className="font-semibold">🖼️ Recent memories</h2>
+        {recentMemories.length === 0 ? (
+          <p className="mt-2 text-sm opacity-70">Memories from followed societies will appear here.</p>
+        ) : (
+          <ul className="mt-2 space-y-2">
+            {recentMemories.map((g) => (
+              <li key={g.id} className="rounded-2xl border p-3 text-sm"><strong>{g.title}</strong> — {g.societyName} · {g.year}</li>
+            ))}
           </ul>
         )}
       </section>

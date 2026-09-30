@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DEMO_EVENTS } from "@/lib/demo-data";
 import { getLiveEvents } from "@/lib/content-live";
-import { countOverlaps, formatTime } from "@/lib/events";
+import { countOverlaps, formatTime, getRegistrationStatus } from "@/lib/events";
 import { RegisterButton } from "@/components/register-button";
 import { EventCountdown } from "@/components/event-countdown";
+import { EventShare } from "@/components/event-share";
 import { EventCard } from "@/components/event-card";
 import { Badge } from "@/components/ui/badge";
 
@@ -22,6 +23,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
   if (!event) notFound();
   const clashes = countOverlaps(event, all);
   const related = all.filter((e) => e.id !== event.id && e.societySlug === event.societySlug).slice(0, 2);
+  const registration = getRegistrationStatus(event);
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       {/* Poster */}
@@ -32,7 +34,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
       >
         <div className="flex gap-2">
           <Badge variant={event.status === "live" ? "live" : "open"}><EventCountdown startsAt={event.startsAt} endsAt={event.endsAt} /></Badge>
-          {event.registrationOpen ? <Badge variant="open">Registration open</Badge> : <Badge variant="muted">Registrations closed</Badge>}
+          <Badge variant={registration === "open" ? "open" : "muted"}>Registration: {registration === "open" ? "OPEN" : "CLOSED"}</Badge>
         </div>
       </div>
 
@@ -70,6 +72,9 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
         <Link href={`/societies/${event.societySlug}`} className="rounded-full border px-5 py-2 text-sm" style={{ borderColor: "var(--hairline)" }}>
           {event.societyName} →
         </Link>
+      </div>
+      <div className="mt-3">
+        <EventShare event={event} />
       </div>
 
       {related.length > 0 ? (

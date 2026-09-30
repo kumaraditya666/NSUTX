@@ -11,6 +11,7 @@ export function SiteFooter(): React.JSX.Element {
           <Link href="/societies" className="opacity-70 hover:opacity-100">Societies</Link>
           <Link href="/events" className="opacity-70 hover:opacity-100">Events</Link>
           <Link href="/opportunities" className="opacity-70 hover:opacity-100">Opportunities</Link>
+          <Link href="/memories" className="opacity-70 hover:opacity-100">Memories</Link>
           <Link href="/nsut-mode" className="opacity-70 hover:opacity-100">NSUT Mode</Link>
           <Link href="/ai" className="opacity-70 hover:opacity-100">NSUT AI</Link>
         </nav>

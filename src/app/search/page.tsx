@@ -21,7 +21,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <section><h2 className="font-semibold">Opportunities ({results.opportunities.length})</h2>
             {results.opportunities.map((o) => (<p key={o.id} className="py-1">{o.title} — {o.societyName}</p>))}</section>
           <section><h2 className="font-semibold">Memories ({results.gallery.length})</h2>
-            {results.gallery.map((g) => (<p key={g.id} className="py-1">{g.title} · {g.year}</p>))}</section>
+            {results.gallery.map((g) => (<Link key={g.id} href={`/memories?society=${g.societySlug}`} className="block py-1 underline-offset-4 hover:underline">{g.title} · {g.year}</Link>))}</section>
+          <section><h2 className="font-semibold">People & Team ({results.people.length})</h2>
+            {results.people.map((p) => (<Link key={`${p.societySlug}-${p.role}`} href={`/societies/${p.societySlug}/team`} className="block py-1 underline-offset-4 hover:underline">{p.role} — {p.societyName}</Link>))}</section>
         </div>
       )}
     </div>

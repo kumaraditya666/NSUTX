@@ -2,12 +2,14 @@ import Link from "next/link";
 import { SITE_HERO_LINES, SITE_HERO_SUB, SITE_HERO_TITLE } from "@/lib/constants";
 import { getLiveSocieties } from "@/lib/societies-live";
 import { getLiveAnnouncements, getLiveEvents, getLiveOpportunities } from "@/lib/content-live";
+import { buildCardActivity } from "@/lib/society-config";
 import { DEMO_GALLERY } from "@/lib/demo-data";
 import { SocietyCard } from "@/components/society-card";
 import { SectionHeading } from "@/components/states";
 import { Button } from "@/components/ui/button";
 import { HeroActions } from "@/components/hero-actions";
 import { HeroVisual } from "@/components/hero-visual";
+import { Reveal } from "@/components/reveal";
 import { SocietyRadar } from "@/components/society-radar";
 import { LiveSection } from "@/components/live-section";
 import { EventCard } from "@/components/event-card";
@@ -30,6 +32,7 @@ export default async function Home(): Promise<React.JSX.Element> {
     getLiveOpportunities(),
   ]);
   const activityBySlug = new Map<string, number>();
+  const cardActivity = buildCardActivity(societies, events, opportunities);
   for (const s of societies) {
     const score =
       events.filter((e) => e.societySlug === s.slug && e.status !== "past").length * 3 +
@@ -85,26 +88,35 @@ export default async function Home(): Promise<React.JSX.Element> {
       </section>
 
       {/* 4. EXPLORE */}
-      <section aria-label="Explore" className="py-10">
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <SectionHeading title="Explore" description={`${societies.length} societies · Each one a mini-website`} />
-          <SectionLink href="/explore" label="All societies" />
+      <Reveal label="Explore">
+        <div className="py-10">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <SectionHeading title="Explore" description={`${societies.length} societies · Each one a mini-website`} />
+            <SectionLink href="/explore" label="All societies" />
+          </div>
+          <div className="hscroll">
+            {societies.slice(0, 8).map((s) => {
+              const activity = cardActivity.get(s.slug);
+              return activity === undefined ? (
+                <SocietyCard key={s.slug} society={s} />
+              ) : (
+                <SocietyCard key={s.slug} society={s} activity={activity} />
+              );
+            })}
+          </div>
         </div>
-        <div className="hscroll">
-          {societies.slice(0, 8).map((s) => (
-            <SocietyCard key={s.slug} society={s} />
-          ))}
-        </div>
-      </section>
+      </Reveal>
 
       {/* 5. NSUT RADAR */}
-      <section aria-label="NSUT Radar" className="py-10">
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <SectionHeading title="NSUT Radar" description="Activity visualization — not a ranking." />
-          <SectionLink href="/explore" label="Find your society" />
+      <Reveal label="NSUT Radar">
+        <div className="py-10">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <SectionHeading title="NSUT Radar" description="Activity visualization — not a ranking." />
+            <SectionLink href="/explore" label="Find your society" />
+          </div>
+          <SocietyRadar activityBySlug={activityBySlug} />
         </div>
-        <SocietyRadar activityBySlug={activityBySlug} />
-      </section>
+      </Reveal>
 
       {/* 6. NSUT MODE */}
       <section aria-label="NSUT Mode" className="py-10">
@@ -126,7 +138,7 @@ export default async function Home(): Promise<React.JSX.Element> {
       <section aria-label="Memory Wall" className="py-10">
         <div className="mb-4 flex items-end justify-between gap-4">
           <SectionHeading title="Memory Wall" description="Moksha 2026 + society highlights." />
-          <SectionLink href="/daily" label="Daily + memories" />
+          <SectionLink href="/memories" label="All memories" />
         </div>
         <div className="hscroll">
           {DEMO_GALLERY.slice(0, 5).map((g) => (

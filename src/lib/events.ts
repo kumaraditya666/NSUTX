@@ -11,6 +11,16 @@ export function getEventStatus(startsAt: string, endsAt: string): EventItem["sta
   return "upcoming";
 }
 
+export type RegistrationStatus = "open" | "closed";
+
+// Lifecycle (time-based) and registration (deadline-based) are separate.
+// FULL / NOT REQUIRED are only shown when explicitly known — never inferred.
+export function getRegistrationStatus(event: Pick<EventItem, "registrationOpen" | "status">): RegistrationStatus {
+  if (!event.registrationOpen) return "closed";
+  if (event.status === "past") return "closed";
+  return "open";
+}
+
 export function minutesUntil(startsAt: string): number {
   const diff = new Date(startsAt).getTime() - Date.now();
   return Math.max(0, Math.round(diff / 60_000));

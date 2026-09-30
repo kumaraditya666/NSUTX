@@ -28,7 +28,8 @@ export function SearchOverlay(): React.JSX.Element {
     for (const e of results.events) list.push({ key: `e-${e.id}`, group: "Events", label: e.title, detail: e.societyName, href: `/events/${e.id}` });
     for (const a of results.announcements) list.push({ key: `a-${a.id}`, group: "Announcements", label: a.title, detail: a.societyName, href: `/societies/${a.societySlug}/updates` });
     for (const o of results.opportunities) list.push({ key: `o-${o.id}`, group: "Opportunities", label: o.title, detail: o.societyName, href: "/opportunities" });
-    for (const g of results.gallery) list.push({ key: `g-${g.id}`, group: "Memories", label: g.title, detail: `${g.societyName} · ${g.year}`, href: "/daily" });
+    for (const g of results.gallery) list.push({ key: `g-${g.id}`, group: "Memories", label: g.title, detail: `${g.societyName} · ${g.year}`, href: `/memories?society=${g.societySlug}` });
+    for (const p of results.people) list.push({ key: `p-${p.societySlug}-${p.role}`, group: "People", label: `${p.role} — ${p.societyName}`, detail: p.name, href: `/societies/${p.societySlug}/team` });
     return list;
   }, [results]);
 

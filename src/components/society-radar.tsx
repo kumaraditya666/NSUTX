@@ -39,6 +39,12 @@ export function SocietyRadar({ activityBySlug }: { activityBySlug?: Map<string, 
       </div>
       <p className="text-center text-sm font-bold tracking-[0.3em] opacity-70">NSUTX</p>
       <div className="relative mx-auto aspect-square max-w-md">
+        <svg aria-hidden="true" viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full opacity-40">
+          {featured.map((s) => {
+            const pos = POSITIONS[s.slug] ?? { x: 50, y: 50 };
+            return <line key={s.slug} x1="50" y1="50" x2={pos.x} y2={pos.y} stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 1.5" />;
+          })}
+        </svg>
         {featured.map((s) => {
           const pos = POSITIONS[s.slug] ?? { x: 50, y: 50 };
           const activity = activityBySlug?.get(s.slug) ?? demoActivityFor(s.slug);

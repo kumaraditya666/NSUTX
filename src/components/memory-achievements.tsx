@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { DEMO_ACHIEVEMENTS, DEMO_GALLERY, type DemoAchievement } from "@/lib/demo-data";
 
-export function MemoryWall({ societySlug, year, category }: { societySlug?: string; year?: number; category?: string }): React.JSX.Element {
+export function MemoryWall({ societySlug, year, category, kind }: { societySlug?: string; year?: number; category?: string; kind?: string }): React.JSX.Element {
   const items = DEMO_GALLERY.filter((g) => {
     if (societySlug && g.societySlug !== societySlug) return false;
     if (year && g.year !== year) return false;
     if (category && g.category !== category) return false;
+    if (kind && g.kind !== kind) return false;
     return true;
   });
   if (items.length === 0) {

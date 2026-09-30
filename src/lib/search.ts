@@ -1,5 +1,12 @@
 import { SEED_SOCIETIES } from "@/lib/seed-societies";
-import { DEMO_ANNOUNCEMENTS, DEMO_EVENTS, DEMO_GALLERY, DEMO_OPPORTUNITIES } from "@/lib/demo-data";
+import { DEMO_ANNOUNCEMENTS, DEMO_EVENTS, DEMO_GALLERY, DEMO_OPPORTUNITIES, DEMO_TEAM } from "@/lib/demo-data";
+
+export interface PeopleResult {
+  name: string;
+  role: string;
+  societySlug: string;
+  societyName: string;
+}
 
 export interface SearchResults {
   societies: typeof SEED_SOCIETIES;
@@ -7,6 +14,7 @@ export interface SearchResults {
   announcements: typeof DEMO_ANNOUNCEMENTS;
   opportunities: typeof DEMO_OPPORTUNITIES;
   gallery: typeof DEMO_GALLERY;
+  people: PeopleResult[];
 }
 
 function fuzzyMatch(haystack: string, needle: string): boolean {
@@ -29,7 +37,16 @@ function fuzzyMatch(haystack: string, needle: string): boolean {
 export function universalSearch(query: string): SearchResults {
   const q = query.trim();
   if (q.length === 0) {
-    return { societies: [], events: [], announcements: [], opportunities: [], gallery: [] };
+    return { societies: [], events: [], announcements: [], opportunities: [], gallery: [], people: [] };
+  }
+  const people: PeopleResult[] = [];
+  for (const [slug, members] of Object.entries(DEMO_TEAM)) {
+    const society = SEED_SOCIETIES.find((s) => s.slug === slug);
+    for (const m of members) {
+      if (fuzzyMatch(m.role, q) || fuzzyMatch(m.department, q)) {
+        people.push({ name: m.name, role: m.role, societySlug: slug, societyName: society?.name ?? slug });
+      }
+    }
   }
   return {
     societies: SEED_SOCIETIES.filter(
@@ -39,5 +56,6 @@ export function universalSearch(query: string): SearchResults {
     announcements: DEMO_ANNOUNCEMENTS.filter((a) => fuzzyMatch(a.title, q) || fuzzyMatch(a.body, q) || fuzzyMatch(a.societyName, q)).slice(0, 6),
     opportunities: DEMO_OPPORTUNITIES.filter((o) => fuzzyMatch(o.title, q) || fuzzyMatch(o.description, q) || fuzzyMatch(o.type, q)).slice(0, 6),
     gallery: DEMO_GALLERY.filter((g) => fuzzyMatch(g.title, q) || fuzzyMatch(g.societyName, q)).slice(0, 6),
+    people: people.slice(0, 6),
   };
 }
